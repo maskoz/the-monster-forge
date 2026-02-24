@@ -4,14 +4,14 @@
 
 The Monster Forge instantly creates action-oriented NPCs with role-based stats, three-round villain action cards, bloodied escalations, creature flavor text, and auto-generated names — all from a single macro dialog.
 
-Designed for **Shadowdark RPG** by Arcane Library. Inspired by Matt Colville's Action-Oriented Monsters and the Dungeon Coach Monster Playbook.
+Designed for **Shadowdark RPG** by Arcane Library. Inspired by Matt Colville's Action-Oriented Monsters.
 
 ---
 
 ## Features
 
 - **6 NPC Roles** — Brute, Soldier, Skirmisher, Artillery, Controller, Support
-- **Shadowdark Quick Combat Statistics** — AC, HP, ATK, and DC pulled directly from the official baseline chart
+- **baseline combat statistics** — AC, HP, ATK, and DC pulled directly from the official baseline chart
 - **Three-Round Villain Action Card** — Setup → Twist → Ultimate, drawn from phase-tagged tables
 - **Bloodied Escalations** — every ability has a half-HP escalation that changes the fight
 - **No rolls, no saves on spice effects** — effects just happen, keeping combat fast
@@ -91,7 +91,7 @@ The **Action Monsters** compendium contains 15 roll tables:
 ## Credits
 
 - **Design & Development**: maskoz (Lee McKinney)
-- **Inspired by**: Matt Colville's [Action-Oriented Monsters](https://www.youtube.com/watch?v=y_zl8WWaSyI) and the Dungeon Coach Monster Playbook
+- **Inspired by**: Matt Colville's [Action-Oriented Monsters](https://www.youtube.com/watch?v=y_zl8WWaSyI)
 - **Built for**: Shadowdark RPG by Kelsey Dionne / [Arcane Library](https://www.thearcanelibrary.com)
 
 *The Monster Forge is an independent, fan-made tool. It is not affiliated with or endorsed by Arcane Library.*

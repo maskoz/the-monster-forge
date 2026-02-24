@@ -20,4 +20,4 @@ For commercial licensing inquiries, open an issue on the GitHub repository.
 
 ---
 
-*The Monster Forge is an independent fan tool and is not affiliated with Arcane Library or Kelsey Dionne. Shadowdark RPG is a trademark of Arcane Library.*
+*The Monster Forge is an independent fan tool and is not affiliated with, sponsored by, or endorsed by Arcane Library or Kelsey Dionne. Shadowdark RPG is a trademark of Arcane Library. This module references Shadowdark game mechanics (stat baselines, range terminology, and system conventions) purely for compatibility purposes. Game mechanics are not subject to copyright protection. No Shadowdark rulebook text, artwork, or proprietary content has been reproduced.*

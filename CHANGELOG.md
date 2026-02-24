@@ -10,7 +10,7 @@ All notable changes to this project will be documented here.
 
 **Core Features**
 - Six NPC roles: Brute, Soldier, Skirmisher, Artillery, Controller, Support
-- Full Shadowdark Quick Combat Statistics baseline (AC, HP, ATK, DC) from level 0–19 and Legendary Boss (30)
+- Full baseline combat statistics (AC, HP, ATK, DC) from level 0–19 and Legendary Boss (30)
 - Role-appropriate ability score distribution with stat range clamping
 - HP variance scaling by level tier
 - Soldier AC +2 bonus
