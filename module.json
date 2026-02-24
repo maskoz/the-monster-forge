@@ -2,7 +2,7 @@
   "id": "the-monster-forge",
   "title": "The Monster Forge",
   "description": "A self-contained NPC generator for Shadowdark RPG. Instantly forge action-oriented monsters with role-based stats, three-round villain action cards, bloodied escalations, creature flavor, and auto-generated names \u2014 all from a single macro.",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "compatibility": {
     "minimum": "12",
     "verified": "13"
@@ -15,7 +15,7 @@
   ],
   "url": "https://github.com/maskoz/the-monster-forge",
   "manifest": "https://github.com/maskoz/the-monster-forge/releases/latest/download/module.json",
-  "download": "https://github.com/maskoz/the-monster-forge/releases/download/1.0.2/module.zip",
+  "download": "https://github.com/maskoz/the-monster-forge/releases/download/1.0.3/module.zip",
   "readme": "https://github.com/maskoz/the-monster-forge/blob/main/README.md",
   "changelog": "https://github.com/maskoz/the-monster-forge/blob/main/CHANGELOG.md",
   "bugs": "https://github.com/maskoz/the-monster-forge/issues",
@@ -26,14 +26,16 @@
       "label": "Action Monsters",
       "path": "packs/action-monsters",
       "type": "RollTable",
-      "system": "shadowdark"
+      "system": "shadowdark",
+      "folder": "The Monster Forge"
     },
     {
       "name": "monster-forge-macros",
       "label": "Monster Forge Macros",
       "path": "packs/monster-forge-macros",
       "type": "Macro",
-      "system": "shadowdark"
+      "system": "shadowdark",
+      "folder": "The Monster Forge"
     }
   ],
   "relationships": {
@@ -48,15 +50,5 @@
       }
     ]
   },
-  "license": "SEE LICENSE IN LICENSE.md",
-  "packFolders": [
-    {
-      "name": "The Monster Forge",
-      "sorting": "a",
-      "packs": [
-        "the-monster-forge.action-monsters",
-        "the-monster-forge.monster-forge-macros"
-      ]
-    }
-]
-}  
+  "license": "SEE LICENSE IN LICENSE.md"
+}
