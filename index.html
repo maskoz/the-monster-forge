@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Monster Forge — Shadowdark NPC Generator for Foundry VTT</title>
+  <meta name="description" content="Instantly forge action-oriented Shadowdark NPCs with villain action cards, bloodied escalations, and creature flavor. Free Foundry VTT module by maskoz.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --forge-black:   #0a0805;
+      --forge-dark:    #120e09;
+      --forge-ember:   #c84b0c;
+      --forge-gold:    #d4922a;
+      --forge-pale:    #e8dcc8;
+      --forge-dim:     #8a7560;
+      --forge-glow:    #ff6b1a;
+      --forge-steel:   #2a2420;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--forge-black);
+      color: var(--forge-pale);
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: 18px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE TEXTURE OVERLAY ── */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.4;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 4rem 2rem;
+      position: relative;
+      background:
+        radial-gradient(ellipse 60% 40% at 50% 80%, rgba(200,75,12,0.18) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 60% at 50% 100%, rgba(212,146,42,0.08) 0%, transparent 60%),
+        var(--forge-black);
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--forge-ember), var(--forge-gold), var(--forge-ember), transparent);
+    }
+
+    .anvil-icon {
+      font-size: 4rem;
+      margin-bottom: 1.5rem;
+      animation: pulse-glow 3s ease-in-out infinite;
+      display: block;
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { filter: drop-shadow(0 0 8px rgba(200,75,12,0.4)); }
+      50%       { filter: drop-shadow(0 0 24px rgba(200,75,12,0.8)); }
+    }
+
+    .hero-eyebrow {
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--forge-ember);
+      margin-bottom: 1rem;
+      opacity: 0;
+      animation: fade-up 0.8s ease 0.2s forwards;
+    }
+
+    h1 {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(3rem, 9vw, 7rem);
+      font-weight: 900;
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+      background: linear-gradient(160deg, #f0e0c0 20%, var(--forge-gold) 50%, var(--forge-ember) 80%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.3em;
+      opacity: 0;
+      animation: fade-up 0.8s ease 0.4s forwards;
+    }
+
+    .hero-sub {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(0.8rem, 2vw, 1rem);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--forge-dim);
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      animation: fade-up 0.8s ease 0.6s forwards;
+    }
+
+    .hero-desc {
+      max-width: 560px;
+      font-size: 1.15rem;
+      color: var(--forge-pale);
+      opacity: 0.8;
+      margin-bottom: 3rem;
+      font-style: italic;
+      opacity: 0;
+      animation: fade-up 0.8s ease 0.8s forwards;
+    }
+
+    .cta-group {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      opacity: 0;
+      animation: fade-up 0.8s ease 1s forwards;
+    }
+
+    .btn {
+      font-family: 'Cinzel', serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 0.9rem 2.2rem;
+      border: 1px solid;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.05));
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .btn:hover::before { opacity: 1; }
+
+    .btn-primary {
+      background: var(--forge-ember);
+      border-color: var(--forge-gold);
+      color: #fff;
+      box-shadow: 0 0 20px rgba(200,75,12,0.3);
+    }
+
+    .btn-primary:hover {
+      background: var(--forge-gold);
+      box-shadow: 0 0 35px rgba(212,146,42,0.5);
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border-color: var(--forge-dim);
+      color: var(--forge-dim);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--forge-pale);
+      color: var(--forge-pale);
+      transform: translateY(-2px);
+    }
+
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      max-width: 800px;
+      margin: 0 auto 4rem;
+      padding: 0 2rem;
+    }
+
+    .divider::before, .divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--forge-steel));
+    }
+
+    .divider::after {
+      background: linear-gradient(90deg, var(--forge-steel), transparent);
+    }
+
+    .divider-glyph {
+      color: var(--forge-ember);
+      font-size: 1.2rem;
+    }
+
+    /* ── SECTIONS ── */
+    section {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 5rem 2rem;
+    }
+
+    .section-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--forge-ember);
+      margin-bottom: 0.8rem;
+    }
+
+    h2 {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 700;
+      color: var(--forge-pale);
+      margin-bottom: 1.5rem;
+      line-height: 1.1;
+    }
+
+    /* ── FEATURES GRID ── */
+    .features {
+      background: var(--forge-dark);
+      border-top: 1px solid var(--forge-steel);
+      border-bottom: 1px solid var(--forge-steel);
+    }
+
+    .features-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 5rem 2rem;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 2px;
+      margin-top: 3rem;
+      border: 1px solid var(--forge-steel);
+    }
+
+    .feature-card {
+      padding: 2rem;
+      background: var(--forge-dark);
+      border: 1px solid var(--forge-steel);
+      transition: background 0.3s, border-color 0.3s;
+      position: relative;
+    }
+
+    .feature-card:hover {
+      background: #1a1410;
+      border-color: var(--forge-ember);
+    }
+
+    .feature-card:hover .feature-icon {
+      color: var(--forge-gold);
+    }
+
+    .feature-icon {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      display: block;
+      color: var(--forge-ember);
+      transition: color 0.3s;
+    }
+
+    .feature-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--forge-pale);
+      margin-bottom: 0.5rem;
+    }
+
+    .feature-desc {
+      font-size: 0.95rem;
+      color: var(--forge-dim);
+      line-height: 1.6;
+    }
+
+    /* ── EXAMPLE OUTPUT ── */
+    .output-block {
+      background: #0d0a07;
+      border: 1px solid var(--forge-steel);
+      border-left: 3px solid var(--forge-ember);
+      padding: 2rem 2.5rem;
+      margin-top: 2.5rem;
+      font-size: 0.95rem;
+      line-height: 1.8;
+      position: relative;
+    }
+
+    .output-block::before {
+      content: "EXAMPLE OUTPUT";
+      position: absolute;
+      top: -0.6rem;
+      left: 1.5rem;
+      background: #0d0a07;
+      padding: 0 0.5rem;
+      font-family: 'Cinzel', serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      color: var(--forge-ember);
+    }
+
+    .output-flavor {
+      font-style: italic;
+      color: var(--forge-dim);
+      margin-bottom: 1.2rem;
+      padding-bottom: 1.2rem;
+      border-bottom: 1px solid var(--forge-steel);
+    }
+
+    .output-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      color: var(--forge-gold);
+      text-transform: uppercase;
+    }
+
+    .output-stat {
+      color: var(--forge-pale);
+      margin-bottom: 0.3rem;
+    }
+
+    .output-round {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--forge-steel);
+    }
+
+    .output-round-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.75rem;
+      color: var(--forge-gold);
+      letter-spacing: 0.1em;
+    }
+
+    .output-bloodied {
+      color: #8b2020;
+      font-style: italic;
+      font-size: 0.9rem;
+      padding-left: 1rem;
+      margin-top: 0.3rem;
+    }
+
+    /* ── INSTALL ── */
+    .install-box {
+      background: #0d0a07;
+      border: 1px solid var(--forge-steel);
+      padding: 1.5rem 2rem;
+      margin-top: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .install-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--forge-ember);
+      white-space: nowrap;
+    }
+
+    .install-url {
+      font-family: 'Courier New', monospace;
+      font-size: 0.85rem;
+      color: var(--forge-pale);
+      word-break: break-all;
+      flex: 1;
+    }
+
+    .copy-btn {
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      background: var(--forge-steel);
+      border: 1px solid var(--forge-dim);
+      color: var(--forge-pale);
+      padding: 0.4rem 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .copy-btn:hover {
+      background: var(--forge-ember);
+      border-color: var(--forge-gold);
+    }
+
+    .copy-btn.copied {
+      background: #1a3a1a;
+      border-color: #4a8a4a;
+      color: #8aba8a;
+    }
+
+    /* ── TABLES SECTION ── */
+    .table-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1px;
+      background: var(--forge-steel);
+      border: 1px solid var(--forge-steel);
+      margin-top: 2.5rem;
+    }
+
+    .table-cell {
+      background: var(--forge-dark);
+      padding: 1rem 1.2rem;
+      font-size: 0.9rem;
+    }
+
+    .table-cell-name {
+      color: var(--forge-pale);
+      font-size: 0.9rem;
+    }
+
+    .table-cell-count {
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: var(--forge-ember);
+      margin-top: 0.2rem;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--forge-steel);
+      padding: 3rem 2rem;
+      text-align: center;
+      color: var(--forge-dim);
+      font-size: 0.9rem;
+    }
+
+    footer a {
+      color: var(--forge-ember);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      color: var(--forge-gold);
+    }
+
+    .footer-inner {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .footer-logo {
+      font-family: 'Cinzel', serif;
+      font-size: 1.2rem;
+      color: var(--forge-pale);
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .footer-disclaimer {
+      font-size: 0.8rem;
+      color: var(--forge-steel);
+      max-width: 600px;
+      margin: 1.5rem auto 0;
+      line-height: 1.6;
+      border-top: 1px solid var(--forge-steel);
+      padding-top: 1.5rem;
+    }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--forge-black); }
+    ::-webkit-scrollbar-thumb { background: var(--forge-steel); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--forge-ember); }
+  </style>
+</head>
+<body>
+
+  <!-- HERO -->
+  <section class="hero">
+    <span class="anvil-icon">⚒</span>
+    <p class="hero-eyebrow">Foundry VTT · Shadowdark RPG</p>
+    <h1>The Monster<br>Forge</h1>
+    <p class="hero-sub">Action-Oriented NPC Generator</p>
+    <p class="hero-desc">
+      Forge battle-ready monsters in seconds. Role-based stats, three-round villain action cards, bloodied escalations, creature flavor — all from one dialog.
+    </p>
+    <div class="cta-group">
+      <a href="https://github.com/maskoz/the-monster-forge/releases/latest" class="btn btn-primary">Download Latest</a>
+      <a href="https://github.com/maskoz/the-monster-forge" class="btn btn-secondary">View on GitHub</a>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <div class="features">
+    <div class="features-inner">
+      <p class="section-label">What it does</p>
+      <h2>Everything you need.<br>Nothing you don't.</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <span class="feature-icon">⚔</span>
+          <p class="feature-title">Six Combat Roles</p>
+          <p class="feature-desc">Brute, Soldier, Skirmisher, Artillery, Controller, Support — each with its own stat priorities, weapons, and villain actions.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">◆</span>
+          <p class="feature-title">Villain Action Cards</p>
+          <p class="feature-desc">Three-round narrative arc: Setup → Twist → Ultimate. Drawn from phase-tagged tables so every round has the right escalation.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">☠</span>
+          <p class="feature-title">Bloodied Escalations</p>
+          <p class="feature-desc">Every ability has a half-HP escalation. Fights change shape as the monster takes damage — no two combats feel the same.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">◇</span>
+          <p class="feature-title">On-Hit Riders</p>
+          <p class="feature-desc">Universal effects drawn from Damage Rider, Movement Trick, and Battlefield Control tables — weighted for variety.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">✦</span>
+          <p class="feature-title">Creature Flavor</p>
+          <p class="feature-desc">120 role-specific physical descriptions. Each NPC arrives with a one-line portrait the GM can read aloud immediately.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">⬡</span>
+          <p class="feature-title">Batch Generation</p>
+          <p class="feature-desc">Forge 1–10 NPCs at once. Names auto-generate per role, or supply your own. Named batches get numbered suffixes automatically.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXAMPLE OUTPUT -->
+  <section>
+    <p class="section-label">In Practice</p>
+    <h2>What a forged NPC looks like</h2>
+    <p style="color:var(--forge-dim);max-width:600px">Every NPC is written directly into the Foundry description tab — ready to run without prep.</p>
+
+    <div class="output-block">
+      <p class="output-flavor">Seven feet of knotted sinew, neck wider than its head, moving with the slow patience of something that has never lost a fight.</p>
+      <p class="output-label">The Monster Forge v10.14 — Level 5 (Tier 2) | Role: Brute</p>
+      <p class="output-stat">AC 13 | HP 26 | ATK 2 atk +4 (1d8) | DC 15</p>
+      <p class="output-stat">Weapons: Greataxe (melee), Javelin (ranged)</p>
+      <p class="output-stat">Mods — STR 2 DEX 1 CON 1 INT −1 WIS 0 CHA 0</p>
+
+      <div class="output-round">
+        <p class="output-round-label">◆ Round 1 — Setup:</p>
+        <p class="output-stat">Grab and Hurl. The brute seizes the nearest creature and hurls it up to Near. The thrown creature lands Prone.</p>
+        <p class="output-bloodied">☠ Bloodied: The thrown creature crashes into another creature within Close of the landing point, and both fall Prone.</p>
+      </div>
+
+      <div class="output-round">
+        <p class="output-round-label">◆ Round 2 — Twist:</p>
+        <p class="output-stat">Ground Slam. The brute smashes the ground — a Close radius of difficult terrain erupts, all creatures within Close knocked back 5 feet.</p>
+        <p class="output-bloodied">☠ Bloodied: The radius extends to Near and all creatures within it fall Prone.</p>
+      </div>
+
+      <div class="output-round">
+        <p class="output-round-label">◆ Round 3 — Ultimate:</p>
+        <p class="output-stat">Whirlwind Strike. The brute spins in a full circle — all creatures within Close take 1d8 damage and are pushed back 5 feet.</p>
+        <p class="output-bloodied">☠ Bloodied: The reach extends to Near.</p>
+      </div>
+
+      <div class="output-round">
+        <p class="output-round-label">◇ On-Hit Rider:</p>
+        <p class="output-stat">Bleeding Cut. On a hit the wound refuses to close — the target loses 1 HP at the start of each of its turns until bandaged.</p>
+        <p class="output-bloodied">☠ Bloodied: Bleeding damage increases to 1d8.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- INSTALL -->
+  <div class="features">
+    <div class="features-inner">
+      <p class="section-label">Get Started</p>
+      <h2>Install in Foundry VTT</h2>
+      <p style="color:var(--forge-dim);max-width:600px;margin-bottom:1rem">Open <strong style="color:var(--forge-pale)">Add-on Modules → Install Module</strong> and paste the manifest URL below.</p>
+
+      <div class="install-box">
+        <span class="install-label">Manifest</span>
+        <span class="install-url" id="manifest-url">https://raw.githubusercontent.com/maskoz/the-monster-forge/main/module.json</span>
+        <button class="copy-btn" onclick="copyManifest(this)">Copy</button>
+      </div>
+
+      <p style="color:var(--forge-dim);font-size:0.9rem;margin-top:1.5rem">
+        Or download the zip directly from the
+        <a href="https://github.com/maskoz/the-monster-forge/releases" style="color:var(--forge-ember)">Releases page</a>
+        and extract into your <code style="color:var(--forge-pale);font-size:0.85rem">Data/modules/</code> folder.
+      </p>
+    </div>
+  </div>
+
+  <!-- TABLES -->
+  <section>
+    <p class="section-label">The Tables</p>
+    <h2>300 unique entries across 15 tables</h2>
+    <p style="color:var(--forge-dim);max-width:600px">Every entry has a named ability, a mechanical effect, and a bloodied escalation. All in Shadowdark's Close / Near / Far language.</p>
+
+    <div class="table-grid">
+      <div class="table-cell"><p class="table-cell-name">Brute: Malice</p><p class="table-cell-count">20 entries</p></div>
+      <div class="table-cell"><p class="table-cell-name">Soldier: Malice</p><p class="table-cell-count">20 entries</p></div>
+      <div class="table-cell"><p class="table-cell-name">Skirmisher: Malice</p><p class="table-cell-count">20 entries</p></div>
+      <div class="table-cell"><p class="table-cell-name">Artillery: Malice</p><p class="table-cell-count">20 entries</p></div>
+      <div class="table-cell"><p class="table-cell-name">Controller: Malice</p><p class="table-cell-count">20 entries</p></div>
+      <div class="table-cell"><p class="table-cell-name">Support: Malice</p><p class="table-cell-count">20 entries</p></div>
+      <div class="table-cell"><p class="table-cell-name">Universal: Damage Rider</p><p class="table-cell-count">20 entries</p></div>
+      <div class="table-cell"><p class="table-cell-name">Universal: Movement Trick</p><p class="table-cell-count">20 entries</p></div>
+      <div class="table-cell"><p class="table-cell-name">Universal: Battlefield Control</p><p class="table-cell-count">20 entries</p></div>
+      <div class="table-cell"><p class="table-cell-name">Brute: Flavor</p><p class="table-cell-count">20 entries</p></div>
+      <div class="table-cell"><p class="table-cell-name">Soldier: Flavor</p><p class="table-cell-count">20 entries</p></div>
+      <div class="table-cell"><p class="table-cell-name">Skirmisher: Flavor</p><p class="table-cell-count">20 entries</p></div>
+      <div class="table-cell"><p class="table-cell-name">Artillery: Flavor</p><p class="table-cell-count">20 entries</p></div>
+      <div class="table-cell"><p class="table-cell-name">Controller: Flavor</p><p class="table-cell-count">20 entries</p></div>
+      <div class="table-cell"><p class="table-cell-name">Support: Flavor</p><p class="table-cell-count">20 entries</p></div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <span class="footer-logo">⚒ The Monster Forge</span>
+      <div class="footer-links">
+        <a href="https://github.com/maskoz/the-monster-forge">GitHub</a>
+        <a href="https://github.com/maskoz/the-monster-forge/releases">Releases</a>
+        <a href="https://github.com/maskoz/the-monster-forge/issues">Report a Bug</a>
+        <a href="https://github.com/maskoz/the-monster-forge/blob/main/CHANGELOG.md">Changelog</a>
+      </div>
+      <p>Built by <a href="https://github.com/maskoz">maskoz</a> · Free for personal and commercial use</p>
+      <p class="footer-disclaimer">
+        The Monster Forge is an independent, fan-made tool for Foundry VTT. It is not affiliated with or endorsed by Arcane Library or Kelsey Dionne. Shadowdark RPG is a trademark of Arcane Library. Matt Colville's Action-Oriented Monsters concept is credited with gratitude.
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    function copyManifest(btn) {
+      const url = document.getElementById('manifest-url').textContent;
+      navigator.clipboard.writeText(url).then(() => {
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = 'Copy';
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    }
+  </script>
+
+</body>
+</html>
