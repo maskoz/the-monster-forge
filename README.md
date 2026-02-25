@@ -1,4 +1,4 @@
-The Monster Forge
+# The Monster Forge
 
 **A Shadowdark NPC generator for Foundry VTT**
 
