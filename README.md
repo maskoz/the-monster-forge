@@ -101,3 +101,5 @@ The **Action Monsters** compendium contains 15 roll tables:
 ## License
 
 See [LICENSE.md](LICENSE.md)
+
+*The Monster Forge is an independent product published under the Shadowdark RPG Third-Party License and is not affiliated with The Arcane Library, LLC. Shadowdark RPG © 2023 The Arcane Library, LLC.*
